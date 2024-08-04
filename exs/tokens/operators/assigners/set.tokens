@@ -1,0 +1,11 @@
+COLON    
+  ::= ":";
+  
+DOUBLE_COLON
+  ::= "::";
+
+TRIPLE_COLON
+  ::= ":::";
+
+DOUBLE_COLON_EQUALS
+  ::= "::=";

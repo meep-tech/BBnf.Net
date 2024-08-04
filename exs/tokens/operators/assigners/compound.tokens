@@ -1,0 +1,26 @@
+COLON_EQUALS
+  ::= ":=";
+
+DOT_EQUALS
+  ::= ".=";
+
+PLUS_EQUALS
+  ::= "+=";
+
+DASH_EQUALS
+  ::= "-=";
+
+STAR_EQUALS
+  ::= "*=";
+
+SLASH_EQUALS
+  ::= "/=";
+
+PERCENT_EQUALS
+  ::= "%=";
+
+PIPE_EQUALS
+  ::= "|=";
+
+AMPERSAND_EQUALS
+  ::= "&=";

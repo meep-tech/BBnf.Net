@@ -1,0 +1,29 @@
+RIGHT_EQUALS_ARROW
+  ::= "=>";
+
+LEFT_EQUALS_ARROW
+  ::= "<=";
+
+RIGHT_DASH_ARROW
+  ::= "->";
+
+LEFT_DASH_ARROW
+  ::= "<-";
+
+RIGHT_TILDE_ARROW
+  ::= "~>";
+
+LEFT_TILDE_ARROW
+  ::= "<~";
+
+DOUBLE_LEFT_ANGLE
+  ::= "<<";
+  
+DOUBLE_RIGHT_ANGLE
+  ::= ">>";
+
+TRIPLE_LEFT_ANGLE
+  ::= "<<<";
+
+TRIPLE_RIGHT_ANGLE
+  ::= ">>>";

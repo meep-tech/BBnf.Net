@@ -1,0 +1,5 @@
+EQUALS
+  ::= "=";
+
+EQUALS_TILDE
+  ::= "=~";

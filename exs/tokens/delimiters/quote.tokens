@@ -1,0 +1,8 @@
+SINGLE_QUOTE 
+  ::= "'";
+
+DOUBLE_QUOTE 
+  ::= /"/;
+
+BACKTICK     
+  ::= "`";

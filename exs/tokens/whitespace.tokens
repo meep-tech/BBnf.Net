@@ -1,0 +1,11 @@
+EOF #eof
+  ::= "\0";
+
+NEWLINE #eol
+  ::= /\r\n|\n\r?/;
+
+INDENT #indent
+  ::= / |\t/;
+
+DEDENT #dedent
+  ::= "";

@@ -1,0 +1,29 @@
+PLUS  
+  ::= "+";
+
+DOUBLE_PLUS
+  ::= "++";
+
+DASH
+  ::= "-";
+
+DOUBLE_DASH
+  ::= "--";
+
+STAR
+  ::= "*";
+
+DOUBLE_STAR
+  ::= "**";
+
+SLASH
+  ::= "/";
+
+DOUBLE_SLASH
+  ::= "//";
+
+PERCENT
+  ::= "%";
+
+DOUBLE_PERCENT
+  ::= "%%";

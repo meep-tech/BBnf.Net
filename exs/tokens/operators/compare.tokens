@@ -1,0 +1,11 @@
+DOUBLE_EQUALS
+  ::= "==";
+
+BANG_EQUALS
+  ::= "!=";
+
+EQUALS_OR_GREATER
+  ::= "=<";
+
+LESS_OR_EQUALS
+  ::= ">=";

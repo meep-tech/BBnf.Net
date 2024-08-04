@@ -1,0 +1,5 @@
+START_BLOCK_COMMENT #begin:cblock #whitespace:before
+  ::= "/*";
+
+END_BLOCK_COMMENT #end:cblock
+  ::= "*/";

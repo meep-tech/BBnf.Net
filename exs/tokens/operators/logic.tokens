@@ -1,0 +1,23 @@
+QUESTION
+  ::= "?";
+
+BANG
+  ::= "!";
+
+TILDE
+  ::= "~";
+
+DOUBLE_TILDE
+  ::= "~~";
+
+AMPERSAND
+  ::= "&";
+
+DOUBLE_AMPERSAND
+  ::= "&&";
+
+PIPE
+  ::= "|";
+
+DOUBLE_PIPE
+  ::= "||";

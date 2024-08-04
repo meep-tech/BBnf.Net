@@ -1,0 +1,17 @@
+DOT
+  ::= ".";
+
+DOUBLE_DOT
+  ::= "..";
+
+TRIPPLE_DOT
+  ::= "...";
+
+HASH
+  ::= "#";
+
+DOUBLE_HASH
+  ::= "##";
+
+BACKSLASH
+  ::= "\\";

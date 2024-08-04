@@ -1,0 +1,11 @@
+COMMA     
+  ::= ",";
+
+SEMICOLON 
+  ::= ";";
+
+DOUBLE_SEMICOLON
+  ::= ";;";
+
+TRIPLE_DASH #indexed
+  ::= "---";

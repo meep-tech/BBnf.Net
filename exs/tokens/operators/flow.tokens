@@ -1,0 +1,17 @@
+DOUBLE_BANG
+  ::= "!!";
+
+BANG_COLON
+  ::= "!:";
+
+DOUBLE_BANG_COLON
+  ::= "!!:";
+
+DOUBLE_QUESTION
+  ::= "??";
+
+QUESTON_COLON
+  ::= "?:";
+
+DOUBLE_QUESTION_COLON
+  ::= "??:";

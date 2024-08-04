@@ -1,0 +1,2 @@
+WORD #priority:lowest
+  ::= /[^\x00-\x7F\w_]+/;
