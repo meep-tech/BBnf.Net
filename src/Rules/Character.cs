@@ -1,6 +1,6 @@
 namespace BBnf.Rules {
   public class Character
-: Literal {
+    : Literal {
     public char Char { get; }
     override public string Text
       => Char.ToString();

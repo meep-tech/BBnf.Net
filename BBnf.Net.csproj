@@ -15,7 +15,7 @@
   </PropertyGroup>  
 
   <PropertyGroup>
-    <DefaultItemExcludes>$(DefaultItemExcludes);tests\**;cli\**;exs\**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);tests\**;cli\**;exs\**;tests\**</DefaultItemExcludes>
   </PropertyGroup>
 
 </Project>

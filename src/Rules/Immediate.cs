@@ -12,7 +12,10 @@ namespace BBnf.Rules {
       Contract.Requires(parent is not null);
 
       cursor.SkipWhiteSpace();
-      if(cursor.Current is '.' && cursor.Next.IsWhiteSpaceOrNull()) {
+      if(cursor.Current is '.'
+        && cursor.Next.IsWhiteSpaceOrNull()
+        && cursor.Previous.IsWhiteSpaceOrNull()
+      ) {
         cursor.Skip();
 
         Immediate immediate = new(parent!, null!);
@@ -24,7 +27,7 @@ namespace BBnf.Rules {
         return immediate;
       }
       else {
-        throw new InvalidDataException("Expected a dot to indicate a concatenation of rules.");
+        throw new InvalidDataException("Expected a spaced dot to indicate a concatenation of rules.");
       }
     }
 

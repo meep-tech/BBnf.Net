@@ -1,6 +1,4 @@
-﻿using Meep.Tech.Where;
-
-namespace BBnf.Net.CLI {
+﻿namespace BBnf.CLI {
   public class Program {
 
     public const string Version
@@ -103,6 +101,29 @@ namespace BBnf.Net.CLI {
           ListGrammars(args);
           break;
       }
+    }
+
+    public static void InitGrammar(string[] args) {
+      (string? name, args) = args;
+      Console.WriteLine($"Initializing grammar: {name}");
+      throw new NotImplementedException();
+    }
+
+    public static void UseGrammar(string[] args) {
+      (string? name, args) = args;
+      Console.WriteLine($"Using grammar: {name}");
+      throw new NotImplementedException();
+    }
+
+    public static void ListGrammars(string[] args) {
+      Console.WriteLine("Listing grammars:");
+      throw new NotImplementedException();
+    }
+
+    public static void ListGrammarRules(string[] args) {
+      (string? name, args) = args;
+      Console.WriteLine($"Listing rules for grammar: {name}");
+      throw new NotImplementedException();
     }
   }
 }
