@@ -4,7 +4,7 @@
 Bespoke-BNF (**BBNF**) is designed to be a more complete and extensible variant of BNF. It's syntax is designed with common conventions, compatibility, and readability in mind while allowing for a more complete, succinct, and descriptive specification of a language's syntax. It is mostly based on the [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) flavors: [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form), [ABNF](https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form) and [XBNF](https://en.wikipedia.org/wiki/Extensible_Backus%E2%80%93Naur_form), but with some additional features and conventions.
 
 ## Comparison
-| *Feature*                        | **BNF**                                                | **EBNF**             | **ABNF**                                              | **XBNF**                       | ***BBNF***                                  |
+| *Features*                       | **BNF**                                                | **EBNF**             | **ABNF**                                              | **XBNF**                       | ***BBNF***                                  |
 |----------------------------------|--------------------------------------------------------|----------------------|-------------------------------------------------------|--------------------------------|---------------------------------------------|
 | **Definition Assignment**        | `x ::= y`                                              | `x ::= y`            | `x = y`                                               | `x = y`                        | `x ::= y` or `x = y` or `x: y`              |
 | **Sequential Concatenation**     | `x y`                                                  | `x , y`              | `x y`                                                 | `x y`                          | `x y`  or `x , y`                           |
@@ -14,10 +14,12 @@ Bespoke-BNF (**BBNF**) is designed to be a more complete and extensible variant 
 | **Character Literal**            | `"x"` or `'x'`                                         | `"x"`                | `"x"`                                                 | `"x"`                          | `'x'`                                       |
 | **String Literal**               | `"text"` or `'text'`                                   | `"text"` or `'text'` | `"text"` or `'text'`                                  | `"text"`                       | `"text"`                                    |
 | **Regex Literal**                | *X*                                                    | `/regex/`            | *X*                                                   | `/regex/`                      | `/regex/`                                   |
-| **Numeric Literal**              | `123`                                                  | `123`                | `123`                                                 | `123`                          | `123`                                       |
+| **Decimal Literal**              | `123`                                                  | `123`                | `123` or `%d123`                                      | `123`                          | `123`                                       |
+| **Hexidecimal Literal**          | *???*                                                  | *???*                | `%x123` [^ABNF-XHex]                                  | *???*                          | *???*                                       |
+| **Octal Literal**                | *???*                                                  | *???*                | `%o123`                                               | *???*                          | *???*                                       |
 | **Numeric Range**                | *X*                                                    | *X*                  | `123-456`                                             | *X*                            | `123-456`                                   |
 | **Escape Sequence**              | `"\x"` or `'\x'`                                       | `"\x"` or `'\x'`     | `"\x"` or `'\x'`                                      | `"\x"`                         | `\x` or `"\x"` or `'\x'`                    |
-| **Comment / Ignored**            | `comment` [^BNF-NDLit]                                 | `(* comment *)`      | `; comment`                                           | `# comment` or `/* comment */` | `# comment` [^BBNF-CvsT] or `/* comment */` |
+| **Comment / Ignored**            | `comment` [^BNF-Prose]                                 | `(* comment *)`      | `; comment`                                           | `# comment` or `/* comment */` | `# comment` [^BBNF-CvsT] or `/* comment */` |
 | **Alternate Choice**             | `x \| y` <br> or: (`x = y` and `x = z`) [^BNF-AltSame] | `x \| y`             | `x / y` <br> or: (`x = y` and `x =/ z`) [^ABNF-AltEq] | `x \| y`                       | `x \| y`                                    |
 | **Not / Inverse**                | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `!x` or `x!`                                |
 | **Unordered Concatenation**      | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `{x}` or `x ~ y`                            |
@@ -37,13 +39,26 @@ Bespoke-BNF (**BBNF**) is designed to be a more complete and extensible variant 
 
 ### Notes
 - All whitespace characters are optional.
-- `x`, `y`, and `z` are placeholders for any valid BNF expression.
+- In most[^ABNF-XHex] examples `x`, `y`, and `z` are placeholders for any valid BNF expression.
 - `s` is a placeholder for a valid BNF expression representing some kind of sequence, and `e` is a placeholder for a valid BNF element within that sequence. 
 - `123`, `N`, `A`, and `B` are placeholders for any valid integer.
 - *X* means that the feature is not explicitly defined in the given standard.
-- `rule`, `token`, `text`, `tag`, `regex`,`comment`, etc. are also placeholders, but for their respective types.
+- `key`, `rule`, `token`, `text`, `tag`, `regex`,`comment`, ...etc are also placeholders, but for their respective types.
 
-## Quick Start
+### Sources
+- https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form {XBNF}
+- https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form {EBNF}
+- https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form {ABNF}
+- http://www.faqs.org/rfcs/rfc2234.html {ABNF}
+- http://www.cs.man.ac.uk/~pjj/bnf/ebnf.html#NOTE {BNF, EBNF, ABNF, XBNF}
+- https://marketplace.visualstudio.com/items?itemName=Mai-Lapyst.xbnf {XBNF}
+- https://sabnf.com/docs/doc7.0/abnf.html {ABNF}
+- https://www.ietf.org/rfc/rfc1945.txt {ABNF}
+
+
+## Usage
+
+### Quick Start
 1) Define your tokens in a directory using `.tokens` files:
 ```bbnf
 
@@ -99,14 +114,15 @@ These tags are used to provide additional information about tokens to the lexer,
 
 ##### Parser Expression Tags
 
-### Custom Tags
+#### Custom Tags
 
-## Usage
 
 ## TODO
 - [ ] update regex literal to use using `/` as delimiters.
 - [ ] add block style comments.
+- [ ] add other defenition assignment operators.
 - [ ] add special sequences.
+- [ ] investigate and add hexidecimal and octal literals? (or at least tags).
 - [ ] add full repeat syntax.
 - [ ] Allow all suffixes as prefixes in BBnf.
 - [ ] add tests for creating a grammar from code
@@ -120,10 +136,11 @@ These tags are used to provide additional information about tokens to the lexer,
   - [ ] implement other built-in tags
   - [ ] implement custom tags
 
+
 [^BBNF-CvsT]: **BBNF - Comments vs Tags** Both inline comments and tags in BBNF use the `#` symbol as a prefix. Inline comments require a whitespace charachter after the `#` and before the comment text (spaced), while tags use immediate syntax and require there to be no whitespace after the symbol and before the key (unspaced).
 [^EBNF-CvsL]: **EBNF - Capitalization vs Lowercase** In some BNF variants; The capitalization used to reference other productions is significant. Productions for tokens are written in all uppercase, while productions for rules are written in all lowercase.
 [^BNF-AltSame]: **BNF - Alternate Same** In pure BNF, alternate choices to the same production can defined by separate rules with the same name. This is not the case in most BNF variants.
 [^ABNF-AltEq]: **ABNF - Alternate Equal** In ABNF, alternate choices are defined by separate rules with the same name, but with the `=` and `=/` operators. 
 [^ABNF-NLCR]: **ABNF - Newline and Carriage Return** In ABNF, the end of a rule can be terminated by either a semicolon (`;`) or a newline that begins with no indentation (`\n\r`).
-[^BNF-NDLit]: **BNF - Non-Delimited Literals** In BNF, comments are not explicitly defined, but any text that is not part of a production is often considered a comment or description of 'extraneous' logic.
-```
+[^BNF-Prose]: **BNF - Non-Delimited Literals** In BNF, comments are not explicitly defined, but any prose test that is not part of a production is often considered a comment or description of 'extraneous' logic.
+[^ABNF-XHex] **ABNF - X as an identifier** In this ABNF example; the `x` is not a placeholder for a production, but is instead a literal part of the required syntax.
