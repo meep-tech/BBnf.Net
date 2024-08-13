@@ -5,6 +5,6 @@ namespace BBnf.Rules {
       : base(parent, pattern) { }
 
     public override string ToBbnf()
-      => $"\"{Text}\"";
+      => $"/{Text}/";
   }
 }

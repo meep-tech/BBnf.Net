@@ -33,9 +33,9 @@ namespace BBnf.Rules {
         cursor.SkipWhiteSpace();
 
         // parse for the assigner
-        if(!cursor.Read("::=")) {
+        if(!(cursor.Read("::=") || cursor.Read('=') || cursor.Read(':'))) {
           throw new InvalidDataException(
-            "Expected `::=` as an assigner following the rule's key (and any optional tags or comments).");
+            "Expected `::=`, `=`, or `:` as an assigner following a rule's key (and any optional tags or comments).");
         }
 
         // make the parent for the custom rule content

@@ -1,5 +1,4 @@
 using System.Diagnostics.Contracts;
-using System.Security.Cryptography;
 
 namespace BBnf.Rules {
 
@@ -53,6 +52,15 @@ namespace BBnf.Rules {
           case '|':
             rules[^1] = Choice.Parse(cursor, context);
             break;
+          case '/' when cursor.Next is '*':
+            _ = ParseTagsAndComments(cursor);
+            break;
+          case '/' when cursor.Next is '/':
+            _ = ParseTagsAndComments(cursor);
+            break;
+          case '"' or '/' or '\'' or '`':
+            rules.Add(Literal.Parse(cursor, context));
+            break;
           case '#' when cursor.Next.IsWhiteSpaceOrNull():
             _ = ParseTagsAndComments(cursor);
             break;
@@ -78,6 +86,20 @@ namespace BBnf.Rules {
             break;
           case char c when c.IsLetter() && c.IsLower():
             rules.Add(Reference.Parse(cursor, context));
+            break;
+          case char c when c.IsDigit():
+            var i = 1;
+            while(cursor.Peek(i).IsDigit()) {
+              i++;
+            }
+
+            if(cursor.Peek(i) is '*') {
+              rules.Add(NoneOrMore.Parse(cursor, context));
+            }
+            else {
+              rules.Add(Number.Parse(cursor, context));
+            }
+
             break;
           case char c when c.IsWhiteSpaceOrNull():
             cursor.Skip();
@@ -130,6 +152,21 @@ namespace BBnf.Rules {
           }
           cursor.SkipWhiteSpace();
         }
+      }
+
+      while(!cursor.IsAtEnd && cursor.Current is '/' && cursor.Next is '*') {
+        cursor.Skip(2);
+        while(!cursor.IsAtEnd && !(cursor.Current is '*' && cursor.Next is '/')) {
+          cursor.Skip();
+        }
+        cursor.Skip(2);
+        cursor.SkipWhiteSpace();
+      }
+
+      while(!cursor.IsAtEnd && cursor.Current is '/' && cursor.Next is '/') {
+        cursor.Skip(2);
+        cursor.Read(While.Not.Char.IsNewLine);
+        cursor.SkipWhiteSpace();
       }
 
       return [.. tags];

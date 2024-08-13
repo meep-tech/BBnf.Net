@@ -10,7 +10,7 @@ namespace BBnf.Rules {
       where T : Terminal<T> {
     public abstract Rule Parent { get; internal init; }
     static T IRule<T>.Parse(TextCursor cursor, Parser.Context context)
-      => cursor.Current is '"' or '\''
+      => cursor.Current is '"' or '\'' or '/'
         ? Literal.Parse(cursor, context) is T literal
           ? literal
           : throw new InvalidDataException("Expected a literal terminal rule.")

@@ -9,9 +9,20 @@ namespace BBnf.Rules {
       Rule? parent = context.Parent;
       Contract.Requires(parent is not null);
 
-      if(cursor.Read(['"', '\'', '`'])) {
+      if(cursor.Read(['"', '\'', '/', '`'])) {
         string text = "";
-        char quote = cursor.Current;
+        string? key = null;
+        char quote = cursor.Previous;
+
+        // read key if it is a special literal
+        if(quote is '`') {
+          if(cursor.Read('{')) {
+            cursor.Read(out key, c => c != '}');
+            cursor.Skip();
+          }
+        }
+
+        // read all chars until the closing quote (except if it is escaped)
         do {
           if(cursor.Read(out string? chars, c => c != quote)) {
             text += chars;
@@ -29,10 +40,14 @@ namespace BBnf.Rules {
               "Expected a single character for a character literal rule using single quotes.")
             : text[0]),
           '"' => new Text(parent!, text),
-          '`' => new Pattern(parent!, text),
+          '/' => new Pattern(parent!, text),
+          '`' => new Special(parent!, key!, text),
           _ => throw new InvalidDataException(
             "Expected a quote of some kind to start a literal rule.")
         };
+      }
+      else if(cursor.Current.IsDigit()) {
+        return Number.Parse(cursor, context);
       }
       else {
         throw new InvalidDataException(
