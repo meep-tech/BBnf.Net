@@ -1,6 +1,6 @@
 namespace BBnf.Rules {
   public class Special
-  : Literal {
+    : Literal {
     public string Key { get; }
     internal Special(Rule parent, string key, string pattern)
       : base(parent, pattern)

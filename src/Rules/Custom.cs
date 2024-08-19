@@ -23,7 +23,7 @@ namespace BBnf.Rules {
 
         // get the key
         cursor.SkipWhiteSpace();
-        if(!cursor.Read(out key!, c => c.IsLetterOrDigit() || c is '_')) {
+        if(!cursor.ReadWhile(out key!, c => c.IsLetterOrDigit() || c is '_')) {
           throw new InvalidDataException(
             "Expected an alphanumeric identifier/word as the rule key.");
         }

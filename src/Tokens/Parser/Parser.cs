@@ -80,7 +80,7 @@ namespace BBnf.Tokens {
 
       // Parse for the key of the token.
       start = cursor.Position;
-      cursor.Read(out name, c => char.IsLetterOrDigit(c) || c == '_');
+      cursor.ReadWhile(out name, c => char.IsLetterOrDigit(c) || c == '_');
       if(name is null) {
         token = null;
         exception = new Exception($"Unexpected end of input in name at position: {cursor.Position}.");
@@ -119,7 +119,7 @@ namespace BBnf.Tokens {
       cursor.SkipWhiteSpace();
       switch(cursor.Current) {
         case '"':
-          if(cursor.Read(out IEnumerable<char>? value, c => c is not '"')) {
+          if(cursor.ReadWhile(out IEnumerable<char>? value, c => c is not '"')) {
             if(!value.Any()) {
               token = null;
               exception = new($"Cannot make a Static Token with an empty value at position: {cursor.Position}.");
@@ -136,7 +136,7 @@ namespace BBnf.Tokens {
             return false;
           }
         case '\'':
-          if(cursor.Read(out IEnumerable<char>? text, c => c is not '\'')) {
+          if(cursor.ReadWhile(out IEnumerable<char>? text, c => c is not '\'')) {
             if(text.Count() != 1) {
               token = null;
               exception = new($"Expected a single character for a Lexeme Token within single quotes at position: {cursor.Position}.");
@@ -153,7 +153,7 @@ namespace BBnf.Tokens {
             return false;
           }
         case '`':
-          if(cursor.Read(out IEnumerable<char>? pattern, c => c is not '`')) {
+          if(cursor.ReadWhile(out IEnumerable<char>? pattern, c => c is not '`')) {
             token = new_Lexeme(start, pattern);
             exception = null;
             break;
@@ -209,7 +209,7 @@ namespace BBnf.Tokens {
             cursor.Skip(c => c is not '\n');
             cursor.SkipWhiteSpace();
           } // read tag
-          else if(cursor.Read(out IEnumerable<char>? tag, c => !c.IsWhiteSpaceOrNull())) {
+          else if(cursor.ReadWhile(out IEnumerable<char>? tag, c => !c.IsWhiteSpaceOrNull())) {
             tags.Add(tag.Join());
             cursor.SkipWhiteSpace();
           }

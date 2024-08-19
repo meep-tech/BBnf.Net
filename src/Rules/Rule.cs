@@ -40,13 +40,22 @@ namespace BBnf.Rules {
           case '[':
             rules.Add(Optional.Parse(cursor, context));
             break;
-          case '?':
+          case '?' when !cursor.Previous.IsWhiteSpaceOrNull():
             rules[^1] = Optional.Parse(cursor, context);
             break;
-          case '*':
+          case '?' when cursor.Previous.IsWhiteSpaceOrNull():
+            rules.Add(Optional.Parse(cursor, context));
+            break;
+          case '*' when cursor.Previous.IsWhiteSpaceOrNull():
+            rules.Add(Repeat.Parse(cursor, context));
+            break;
+          case '*' when !cursor.Previous.IsWhiteSpaceOrNull():
             rules[^1] = NoneOrMore.Parse(cursor, context);
             break;
-          case '+':
+          case '+' when cursor.Previous.IsWhiteSpaceOrNull():
+            rules.Add(OneOrMore.Parse(cursor, context));
+            break;
+          case '+' when !cursor.Previous.IsWhiteSpaceOrNull():
             rules[^1] = OneOrMore.Parse(cursor, context);
             break;
           case '|':
@@ -147,7 +156,7 @@ namespace BBnf.Rules {
         } // read tag
         else {
           cursor.Skip();
-          if(cursor.Read(out string? tag, While.Not.Char.IsWhiteSpaceOrNull)) {
+          if(cursor.ReadWhile(out string? tag, While.Not.Char.IsWhiteSpaceOrNull)) {
             tags.Add(tag);
           }
           cursor.SkipWhiteSpace();

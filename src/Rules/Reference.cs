@@ -14,7 +14,7 @@ namespace BBnf.Rules {
       TextCursor.Location start = cursor.Position;
 
       cursor.SkipWhiteSpace();
-      if(cursor.Read(out string? key, c =>
+      if(cursor.ReadWhile(out string? key, c =>
         (c.IsLetter() && c.IsLower())
         || c == '_'
         || c == '.'

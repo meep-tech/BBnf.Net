@@ -4,47 +4,53 @@
 Bespoke-BNF (**BBNF**) is designed to be a more complete and extensible variant of BNF. It's syntax is designed with common conventions, compatibility, and readability in mind while allowing for a more complete, succinct, and descriptive specification of a language's syntax. It is mostly based on the [BNF](https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) flavors: [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form), [ABNF](https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form) and [XBNF](https://en.wikipedia.org/wiki/Extensible_Backus%E2%80%93Naur_form), but with some additional features and conventions.
 
 ## Feature Comparisons
-| *Features*                       | **ReGex** | **BNF**                                                | **EBNF**             | **ABNF**                                              | **XBNF**                       | ***BBNF***                                  |
-|----------------------------------|-----------|--------------------------------------------------------|----------------------|-------------------------------------------------------|--------------------------------|---------------------------------------------|
-| **Production Defenition**        | `/y/`     | `x ::= y`                                              | `x ::= y`            | `x = y`                                               | `x = y`                        | `x ::= y` or `x = y` or `x: y`              |
-| **Sequential Concatenation**     | `xy`      | `x y`                                                  | `x , y`              | `x y`                                                 | `x y`                          | `x y`  or `x , y`                           |
-| **End of Rule Terminator**       | `/`       | `;`                                                    | `;`                  | `;` or `\n\r` [^ABNF-NLCR]                            | `;`                            | `;`                                         |
-| **Rule Reference**               | *X*       | `<rule>`                                               | `rule`               | `rule` or `<rule>`                                    | `rule` [^EBNF-CvsL]            | `rule` [^EBNF-CvsL] or `<rule>`             |
-| **Token Reference**              | *X*       | `<token>`                                              | `token`              | `token` or `<token>`                                  | `TOKEN` [^EBNF-CvsL]           | `TOKEN` [^EBNF-CvsL] or `<TOKEN>`           |
-| **Character Literal**            | `x`       | `"x"` or `'x'`                                         | `"x"`                | `"x"`                                                 | `"x"`                          | `'x'`                                       |
-| **String Literal**               | `text`    | `"text"` or `'text'`                                   | `"text"` or `'text'` | `"text"` or `'text'`                                  | `"text"`                       | `"text"`                                    |
-| **Regex Literal**                | `regex`   | *X*                                                    | `/regex/`            | *X*                                                   | `/regex/`                      | `/regex/`                                   |
-| **Decimal Literal**              | `123`     | `123`                                                  | `123`                | `123` or `%d123`                                      | `123`                          | `123`                                       |
-| **Hexidecimal Literal**          |           | *???*                                                  | *???*                | `%x123` [^ABNF-XHexKey]                               | *???*                          | *???*                                       |
-| **Octal Literal**                |           | *???*                                                  | *???*                | `%o123`                                               | *???*                          | *???*                                       |
-| **Numeric Range**                |           | *X*                                                    | *X*                  | `123-456`                                             | *X*                            | `123-456`                                   |
-| **Escape Sequence**              |           | `"\x"` or `'\x'`                                       | `"\x"` or `'\x'`     | `"\x"` or `'\x'`                                      | `"\x"`                         | `\x` or `"\x"` or `'\x'`                    |
-| **Comment / Ignored**            |           | `comment` [^BNF-Prose]                                 | `(* comment *)`      | `; comment`                                           | `# comment` or `/* comment */` | `# comment` [^BBNF-CvsT] or `/* comment */` |
-| **Alternate Choice**             |           | `x \| y` <br> or: (`x = y` and `x = z`) [^BNF-AltSame] | `x \| y`             | `x / y` <br> or: (`x = y` and `x =/ z`) [^ABNF-AltEq] | `x \| y`                       | `x \| y`                                    |
-| **Not / Inverse**                |           | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `!x` or `x!`                                |
-| **Unordered Concatenation**      |           | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `{x}` or `x ~ y`                            |
-| **Immediate Concatenation**      |           | *X*                                                    | *X*                  | *X*                                                   | `x . y`                        | `x . y`                                     |
-| **Grouping**                     |           | *X*                                                    | `( x y )`            | `( x y )`                                             | `( x y )`                      | `( x y )`                                   |
-| **Optional**                     |           | *X*                                                    | `[x]`                | `[x]` or `*1x`                                        | `x?`                           | `[x]` or `x?`                               |
-| **Repeat Zero or More Times**    |           | `s = \| i s`                                           | `{ }`                | `*x`                                                  | `x*`                           | `x*` or `*x`                                |
-| **Repeat One or More Times**     |           | `s = i \| i s`                                         | `{ }`                | `1*x`                                                 | `x+`                           | `x+` or `+x`                                |
-| **Repeat Exactly N Times**       |           | *X*                                                    | *X*                  | `Nx`                                                  | *X*                            | `x*N` or `N*x`                              |
-| **Repeat Between A and B Times** |           | *X*                                                    | *X*                  | `A*Bx`                                                | *X*                            | `x*A-B` or `A-B*x`                          |
-| **Repeat N or More Times**       |           | *X*                                                    | *X*                  | `N*x`                                                 | *X*                            | `x*N+`  or `N+*x`                           |
-| **Repeat N or Less Times**       |           | *X*                                                    | *X*                  | `0*Nx`                                                | *X*                            | `x*N-`  or `N-*x`                           |
-| **Repeated and Comma Separated** |           | *X*                                                    | *X*                  | `#x`                                                  | *X*                            | *X*                                         |
-| **Special Sequence**             |           | *X*                                                    | *X*                  | `? x ?`                                               | *X*                            | ``` `{key}x` ```                            |
-| **Prose**                        |           | `comment` [^BNF-Prose]                                 | *X*                  | *X*                                                   | *X*                            | `; prose` [^XBNF-Prose]                     |
-| **Metadata Tags**                |           | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `#tag` [^BBNF-CvsT]                         |
-| **Exceptions**                   |           | *X*                                                    | *X*                  | `- error`                                             | *X*                            | `-- error`                                  |
+| *Features*                       | **ReGex** | **BNF**                                                | **EBNF**             | **ABNF**                                              | **XBNF**                       | ***BBNF***                                                          |
+|----------------------------------|-----------|--------------------------------------------------------|----------------------|-------------------------------------------------------|--------------------------------|---------------------------------------------------------------------|
+| **Production Defenition**        | `/y/`     | `x ::= y`                                              | `x ::= y`            | `x = y`                                               | `x = y`                        | `x ::= y` or `x = y` or `x: y`                                      |
+| **Sequential Concatenation**     | `xy`      | `x y`                                                  | `x , y`              | `x y`                                                 | `x y`                          | `x y`  or `x , y`                                                   |
+| **End of Rule Terminator**       | `/`       | `;`                                                    | `;`                  | `;` or `\n\r` [^ABNF-NLCR]                            | `;`                            | `;`                                                                 |
+| **Rule Reference**               | *X*       | `<rule>`                                               | `rule`               | `rule` or `<rule>`                                    | `rule` [^EBNF-CvsL]            | `rule` [^EBNF-CvsL] or `<rule>`                                     |
+| **Token Reference**              | *X*       | `<token>`                                              | `token`              | `token` or `<token>`                                  | `TOKEN` [^EBNF-CvsL]           | `TOKEN` [^EBNF-CvsL] or `<TOKEN>`                                   |
+| **Character Literal**            | `c`       | `"c"` or `'c'`                                         | `"c"`                | `"c"`                                                 | `"c"`                          | `'c'`                                                               |
+| **Unicode Literal**              | `\uHEX`   | *???*                                                  | *???*                | *???*                                                 | *???*                          | `'c'` or `\uHEX`                                                    |
+| **String Literal**               | `text`    | `"text"` or `'text'`                                   | `"text"` or `'text'` | `"text"` or `'text'`                                  | `"text"`                       | `"text"`                                                            |
+| **Regex Literal**                | `regex`   | *X*                                                    | `/regex/`            | *X*                                                   | `/regex/`                      | `/regex/`                                                           |
+| **Decimal Literal**              | `123`     | `123`                                                  | `123`                | `123` or `%d123`                                      | `123`                          | `123`                                                               |
+| **Hexidecimal Literal**          | `\xHEX`   | *???*                                                  | *???*                | `%x123` [^ABNF-XHexKey]                               | *???*                          | `\xHEX`                                                             |
+| **Octal Literal**                | `\xOCT`   | *???*                                                  | *???*                | `%o123`                                               | *???*                          | `\oOCT`                                                             |
+| **Numeric Range**                | *???*     | *X*                                                    | *X*                  | `123-456`                                             | *X*                            | `123-456` or `123..456`                                             |
+| **Escape Sequence**              | *???*     | `"\c"` or `'\c'`                                       | `"\c"` or `'\c'`     | `"\c"` or `'\c'`                                      | `"\c"`                         | `\c` or `"\c"` or `'\c'` or `\c`                                    |
+| **Comment / Ignored**            | *???*     | `comment` [^BNF-Prose]                                 | `(* comment *)`      | `; comment`                                           | `# comment` or `/* comment */` | `# comment` [^BBNF-CvsT] or `/* comment */`                         |
+| **Alternate Choice**             | *???*     | `x \| y` <br> or: (`x = y` and `x = z`) [^BNF-AltSame] | `x \| y`             | `x / y` <br> or: (`x = y` and `x =/ z`) [^ABNF-AltEq] | `x \| y`                       | `x \| y` or `x\|y` [^BBnf-OrPrec]                                   |
+| **Not / Inverse**                | *???*     | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `!x` or `x!`                                                        |
+| **Unordered Concatenation**      | *???*     | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `{x}`                                                               |
+| **Immediate Concatenation**      | *???*     | *X*                                                    | *X*                  | *X*                                                   | `x . y`                        | `x . y`                                                             |
+| **Grouping**                     | *???*     | *X*                                                    | `( x y )`            | `( x y )`                                             | `( x y )`                      | `( x y )`                                                           |
+| **Optional**                     | *???*     | *X*                                                    | `[x]`                | `[x]` or `*1x`                                        | `x?`                           | `[x]` or `x?` or `?x`                                               |
+| **Repeat Zero or More Times**    | *???*     | `s = \| i s`                                           | `{ }`                | `*x`                                                  | `x*`                           | `x*` or `*x`                                                        |
+| **Repeat One or More Times**     | *???*     | `s = i \| i s`                                         | `{ }`                | `1*x`                                                 | `x+`                           | `x+` or `+x`                                                        |
+| **Repeat Exactly N Times**       | *???*     | *X*                                                    | *X*                  | `Nx`                                                  | *X*                            | `x*N` or `N*x`                                                      |
+| **Repeat Between A and B Times** | *???*     | *X*                                                    | *X*                  | `A*Bx`                                                | *X*                            | `x*A-B` or `A..B*x` or `A-Bx` or `token..B*x` etc... [^BBnf-RngOps] |
+| **Repeat N or More Times**       | *???*     | *X*                                                    | *X*                  | `N*x`                                                 | *X*                            | `x*N+`  or `N+*x`                                                   |
+| **Repeat N or Less Times**       | *???*     | *X*                                                    | *X*                  | `0*Nx`                                                | *X*                            | `x*N-`  or `N-*x`                                                   |
+| **Repeated and Comma Separated** | *???*     | *X*                                                    | *X*                  | `#x`                                                  | *X*                            | *X*                                                                 |
+| **Special Sequence**             | *???*     | *X*                                                    | *X*                  | `? x ?`                                               | *X*                            | ``` `{key}x` ```                                                    |
+| **Prose**                        | *???*     | `comment` [^BNF-Prose]                                 | *X*                  | *X*                                                   | *X*                            | `; prose` [^XBNF-Prose]                                             |
+| **Spread Operator**              | *???*     | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `...rule`                                                           |
+| **Metadata Tags**                | *???*     | *X*                                                    | *X*                  | *X*                                                   | *X*                            | `#tag` [^BBNF-CvsT]                                                 |
+| **Exceptions**                   | *???*     | *X*                                                    | *X*                  | `- error`                                             | *X*                            | `#err`                                                              |
 
-### Notes
-- All whitespace characters are optional.
-- In most[^ABNF-XHexKey] examples `x`, `y`, and `z` are placeholders for any valid BNF expression.
-- `s` is a placeholder for a valid BNF expression representing some kind of sequence, and `e` is a placeholder for a valid BNF element within that sequence. 
-- `123`, `N`, `A`, and `B` are placeholders for any valid integer.
+### Table Notes
 - *X* means that the feature is not explicitly defined in the given standard.
-- `key`, `rule`, `token`, `text`, `tag`, `regex`,`comment`, ...etc are also placeholders, but for their respective types.
+- *???* means that an investigation still needs to be done to determine the correct syntax.
+- All whitespace characters are optional.
+- In most[^ABNF-XHexKey] examples `x`, `y`, and `z` are placeholders for any valid expression.
+- `c` is a placeholder for any valid character.
+- `s` is a placeholder for a valid BNF expression representing some kind of sequence, and `e` is a placeholder for a valid BNF element within that sequence. 
+- `123`, `1234`, `N`, `A`, and `B` are placeholders for any valid integer.
+- `HEX` is a placeholder for any valid hexadecimal number code.	
+- `OCT` is a placeholder for any valid octal number code.	
+- `key`, `rule`, `token`, `text`, `tag`, `regex`, `comment`, ...etc are also placeholders, but for their respective types.
 
 ### Sources
 - https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form {XBNF}
@@ -141,24 +147,38 @@ These tags are used to provide additional information about tokens to the lexer,
 > WIP
 
 ## TODO
-- [ ] update regex literal to use using `/` as delimiters.
-- [ ] add block style comments.
-- [ ] add other defenition assignment operators.
-- [ ] add special sequences.
-- [ ] investigate and add hexidecimal and octal literals? (or at least tags).
-- [ ] add full repeat syntax.
-- [ ] Allow all suffixes as prefixes in BBnf.
-- [ ] add tests for creating a grammar from code
-  - [ ] add tests for the token parser
-  - [ ] add tests for the rule parser
-- [ ] implement the basic grammar -> expression code parser logic
+- Syntax Features
+  - [x] update regex literal to use using `/` as delimiters.
+  - [x] add block style comments.
+  - [x] add other defenition assignment operators.
+  - [x] add special sequences.
+  - [x] add full repeat syntax.
+  - [x] allow all suffixes as prefixes in BBnf.
+  - [x] Add Unordered Sequence using: `{}`.
+  - [x] Add Spread (`...`) operator as just prefix for templating and splatting.
+  - [x] add a general numeric range syntax.
+  - [ ] add negative to the numeric literals.
+  - [ ] make the numeric literal base type into the literal type.
+  - [ ] add plus or minus tailing syntax to repeat.
+  - [ ] add 'spaced' boolean to the or (`|`) operator.
+  - [ ] investigate and add hexidecimal and octal literals? (or at least tags).
+- Tests
+  - [ ] Add tests for Creating a set of Tokens and Grammar rules from code
+    - [ ] add Token parser tests
+    - [ ] add Rule parser tests
+- Grammar Parser Implementation
   - [ ] implement each rule's expression parser {0%}
   - [ ] implement comment handling
   - [ ] implement the rule based parser logic, state, etc.
-  - [ ] implement the whitespace tags 
-  - [ ] implement other built-in tags
-  - [ ] implement custom tags
-
+  - [ ] implement Tags
+    - [ ] implement the whitespace tags 
+    - [ ] implement other built-in tags
+      - [ ] indexer tag 
+    - [ ] implement custom tags
+- Documentation
+  - [ ] Finish the usage docs
+    - [ ] Finish the quick start guide
+  - [ ] Finish the syntax documentation
 
 [^BBNF-CvsT]: **BBNF - Comments vs Tags** Both inline comments and tags in BBNF use the `#` symbol as a prefix. Inline comments require a whitespace charachter after the `#` and before the comment text (spaced), while tags use immediate syntax and require there to be no whitespace after the symbol and before the key (unspaced).
 [^EBNF-CvsL]: **EBNF - Capitalization vs Lowercase** In some BNF variants; The capitalization used to reference other productions is significant. Productions for tokens are written in all uppercase, while productions for rules are written in all lowercase.
@@ -168,3 +188,5 @@ These tags are used to provide additional information about tokens to the lexer,
 [^BNF-Prose]: **BNF - Non-Delimited Literals as Prose** In BNF, comments are not explicitly defined, but any text that is not part of a production is often considered prose... and can be a comment or human readable description of 'extraneous' logic that is not achievable by BNF's basic syntax and rules.
 [^XBNF-Prose]: **XBNF - Prose Comments** Unlike BNF, XBNF differentiates between common documentation comments and 'prose'. Prose can only come after a semicolon at the end of a rule and before the next newline. While comments are entirely descriptive and could be ignored; Prose is human readable plain text that contains extra logic for a rule which could not be handled by BBnf's syntax or easily described using custom tags. 
 [^ABNF-XHexKey] **ABNF - X Hex Keyword** In this ABNF example; the `x` is not a placeholder for a production, but is instead a literal part of the required syntax.
+[^BBnf-RngOps] **BBnf - Range Options** In BBNF; a range is defined using any combination of two Numbers [Ex; `123`, `-4`], or Characters [Ex; `a`, `b`], or Token types that resolve to a any of the previously mentioned types (`token..543`).
+[^BBnf-OrPrec] **BBnf - Alternalte/Or Precidence** In BBnf, you can use the spacing of the or/alternate operator (`|`) to specify the precidence of multiple or operations. The Alternate/Or operation has low precidence when spaced (`x | y`), and higher precidence when unspaced (`x|y`).

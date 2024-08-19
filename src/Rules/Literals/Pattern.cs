@@ -1,6 +1,6 @@
 namespace BBnf.Rules {
   public class Pattern
-  : Literal {
+    : Literal {
     internal Pattern(Rule parent, string pattern)
       : base(parent, pattern) { }
 

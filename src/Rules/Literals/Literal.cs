@@ -17,14 +17,14 @@ namespace BBnf.Rules {
         // read key if it is a special literal
         if(quote is '`') {
           if(cursor.Read('{')) {
-            cursor.Read(out key, c => c != '}');
+            cursor.ReadWhile(out key, c => c != '}');
             cursor.Skip();
           }
         }
 
         // read all chars until the closing quote (except if it is escaped)
         do {
-          if(cursor.Read(out string? chars, c => c != quote)) {
+          if(cursor.ReadWhile(out string? chars, c => c != quote)) {
             text += chars;
           }
           else {
